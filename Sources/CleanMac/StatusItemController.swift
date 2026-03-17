@@ -47,22 +47,6 @@ final class StatusItemController: NSObject {
         alert.runModal()
     }
 
-    func showRunInstalledAppHint(currentLocation: String, installedLocation: String) {
-        let alert = NSAlert()
-        alert.messageText = "CleanMac switched to the installed app"
-        alert.informativeText = "The current process is running from an unstable development or temporary path:\n\n\(currentLocation)\n\nAccessibility permission should be granted to the installed app at:\n\n\(installedLocation)"
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
-    }
-
-    func showInstallAppHint(currentLocation: String) {
-        let alert = NSAlert()
-        alert.messageText = "Install the app to Applications first"
-        alert.informativeText = "CleanMac is currently running from:\n\n\(currentLocation)\n\nFor reliable Accessibility permission and keyboard locking, install and run /Applications/CleanMac.app instead of using swift run or a temporary build path."
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
-    }
-
     @objc private func handleButtonClick(_ sender: NSStatusBarButton) {
         guard let currentEvent = NSApp.currentEvent else {
             onToggleRequested?()
