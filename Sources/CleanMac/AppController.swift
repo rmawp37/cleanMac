@@ -44,6 +44,10 @@ final class AppController {
     }
 
     private func toggleKeyboardLock() {
+        guard ensureStableRuntime() else {
+            return
+        }
+
         if keyboardBlocker.isBlocking {
             keyboardBlocker.stopBlocking()
             capsLockRemapper.restoreOriginalMapping()
@@ -84,6 +88,21 @@ final class AppController {
 
     private func refreshUI() {
         statusItemController.update(isLocked: keyboardBlocker.isBlocking)
+    }
+
+    private func ensureStableRuntime() -> Bool {
+        if AppEnvironment.isInstalledInApplications {
+            return true
+        }
+
+        if AppEnvironment.launchInstalledAppIfAvailable() {
+            statusItemController.showRunInstalledAppHint(currentLocation: AppEnvironment.bundleURL.path, installedLocation: AppEnvironment.installedAppURL.path)
+            NSApp.terminate(nil)
+            return false
+        }
+
+        statusItemController.showInstallAppHint(currentLocation: AppEnvironment.bundleURL.path)
+        return false
     }
 
     private func requestAccessibilityPermissionIfNeeded() {
