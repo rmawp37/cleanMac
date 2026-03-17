@@ -102,16 +102,80 @@ final class StatusItemController: NSObject {
     }
 
     private func icon(isLocked: Bool) -> NSImage? {
-        guard let imageURL = Bundle.module.url(forResource: "logo", withExtension: "png") else {
-            let fallbackName = isLocked ? "lock.fill" : "keyboard"
-            let fallbackImage = NSImage(systemSymbolName: fallbackName, accessibilityDescription: nil)
-            fallbackImage?.isTemplate = true
-            return fallbackImage
+        let size = NSSize(width: 18, height: 18)
+        let image = NSImage(size: size)
+
+        image.lockFocus()
+
+        NSColor.labelColor.setStroke()
+        NSColor.labelColor.setFill()
+
+        let keyboardRect = NSRect(x: 1.5, y: 4.5, width: 15, height: 9)
+        let keyboardPath = NSBezierPath(roundedRect: keyboardRect, xRadius: 2.2, yRadius: 2.2)
+        keyboardPath.lineWidth = 1.4
+        keyboardPath.stroke()
+
+        drawKeyboardKeys(in: keyboardRect)
+
+        if isLocked {
+            drawLockedBadge()
+        } else {
+            drawUnlockedAccent(in: keyboardRect)
         }
 
-        let image = NSImage(contentsOf: imageURL)
-        image?.size = NSSize(width: 18, height: 18)
-        image?.isTemplate = false
+        image.unlockFocus()
+        image.isTemplate = true
+
         return image
+    }
+
+    private func drawKeyboardKeys(in keyboardRect: NSRect) {
+        let keySize = CGSize(width: 1.6, height: 1.3)
+        let rowStartX = keyboardRect.minX + 1.6
+        let topRowY = keyboardRect.maxY - 3.2
+        let bottomRowY = keyboardRect.minY + 2.0
+
+        for column in 0..<5 {
+            let topKeyRect = NSRect(
+                x: rowStartX + CGFloat(column) * 2.4,
+                y: topRowY,
+                width: keySize.width,
+                height: keySize.height
+            )
+            NSBezierPath(roundedRect: topKeyRect, xRadius: 0.4, yRadius: 0.4).fill()
+        }
+
+        for column in 0..<4 {
+            let bottomKeyRect = NSRect(
+                x: rowStartX + 1.2 + CGFloat(column) * 2.6,
+                y: bottomRowY,
+                width: keySize.width,
+                height: keySize.height
+            )
+            NSBezierPath(roundedRect: bottomKeyRect, xRadius: 0.4, yRadius: 0.4).fill()
+        }
+
+        let spaceBarRect = NSRect(x: keyboardRect.midX - 3.2, y: keyboardRect.minY + 0.8, width: 6.4, height: 1.1)
+        NSBezierPath(roundedRect: spaceBarRect, xRadius: 0.5, yRadius: 0.5).fill()
+    }
+
+    private func drawLockedBadge() {
+        let badgeRect = NSRect(x: 10.8, y: 10.1, width: 6.0, height: 6.0)
+        let badgePath = NSBezierPath(ovalIn: badgeRect)
+        badgePath.lineWidth = 1.2
+        badgePath.stroke()
+
+        let xPath = NSBezierPath()
+        xPath.lineWidth = 1.3
+        xPath.move(to: NSPoint(x: badgeRect.minX + 1.5, y: badgeRect.minY + 1.5))
+        xPath.line(to: NSPoint(x: badgeRect.maxX - 1.5, y: badgeRect.maxY - 1.5))
+        xPath.move(to: NSPoint(x: badgeRect.minX + 1.5, y: badgeRect.maxY - 1.5))
+        xPath.line(to: NSPoint(x: badgeRect.maxX - 1.5, y: badgeRect.minY + 1.5))
+        xPath.stroke()
+    }
+
+    private func drawUnlockedAccent(in keyboardRect: NSRect) {
+        let accentRect = NSRect(x: keyboardRect.minX + 1.4, y: keyboardRect.maxY + 0.5, width: 3.6, height: 1.4)
+        NSBezierPath(roundedRect: accentRect, xRadius: 0.7, yRadius: 0.7).fill()
     }
 }
