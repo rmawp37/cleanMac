@@ -29,6 +29,20 @@ swift run
 The build script creates a distributable app bundle at `dist/CleanMac.app` and a zip archive at `dist/CleanMac.zip`.
 By default the app is ad-hoc signed. For public distribution on other Macs, you should rebuild it with a Developer ID identity and notarize it.
 
+## Install from GitHub release
+
+The current public release is not notarized yet. On a different Mac, Gatekeeper may block it even though the app bundle itself is valid.
+
+If macOS refuses to open the app after download, use one of these options:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/CleanMac.app
+```
+
+or right click the app in Finder, choose `Open`, and confirm the dialog.
+
+For a fully frictionless download experience, the release must be signed with a Developer ID certificate and notarized by Apple.
+
 ## Usage
 
 - Left click the menu bar icon to lock or unlock the keyboard
