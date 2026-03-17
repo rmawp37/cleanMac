@@ -1,0 +1,41 @@
+# CleanMac
+
+CleanMac is a lightweight macOS menu bar app that temporarily disables keyboard input so you can clean your keyboard without accidental typing. Mouse and trackpad input stay active.
+
+## Features
+
+- One-click keyboard lock and unlock from the menu bar
+- Media keys are blocked while the lock is active
+- Caps Lock is remapped during the lock and restored on unlock
+- Automatically unlocks after wake from sleep
+
+## Requirements
+
+- macOS 13 or later
+- Accessibility permission enabled for the app
+
+## Run from source
+
+```bash
+swift run
+```
+
+## Build the app bundle
+
+```bash
+./scripts/build-app.sh
+```
+
+The build script creates a distributable app bundle at `dist/CleanMac.app` and a zip archive at `dist/CleanMac.zip`.
+
+## Usage
+
+- Left click the menu bar icon to lock or unlock the keyboard
+- Right click the icon to open the app menu
+- If prompted, grant Accessibility access in System Settings
+
+## Notes
+
+- The app blocks all connected keyboards, not only the built-in MacBook keyboard
+- Caps Lock LED behavior depends on keyboard firmware and may still flash briefly
+- CleanMac is intended for direct distribution outside the Mac App Store
