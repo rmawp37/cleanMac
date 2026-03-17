@@ -5,6 +5,7 @@ CleanMac is a lightweight macOS menu bar app that temporarily disables keyboard 
 ## Features
 
 - One-click keyboard lock and unlock from the menu bar
+- Clear menu bar status icons for locked and unlocked state
 - Media keys are blocked while the lock is active
 - Caps Lock is remapped during the lock and restored on unlock
 - Automatically unlocks after wake from sleep
@@ -20,7 +21,7 @@ CleanMac is a lightweight macOS menu bar app that temporarily disables keyboard 
 swift run
 ```
 
-`swift run` is only for development. Accessibility permission granted to the installed app does not automatically apply to the transient SwiftPM run binary.
+This is the fastest way to run the app locally while developing.
 
 ## Build the app bundle
 
@@ -38,7 +39,12 @@ To update the app branding, replace `logo.png`, `logo.jpg`, or `logo.jpeg` in th
 ./scripts/install-app.sh
 ```
 
-This installs the app to `/Applications/CleanMac.app`. For the most reliable Accessibility behavior, always launch and authorize this installed app instead of using `swift run`.
+This installs the app to `/Applications/CleanMac.app`.
+
+If macOS does not seem to remember Accessibility permission for one launch mode, remove the existing permission entry, then grant it again for the exact variant you are using:
+
+- `swift run` for local development
+- `/Applications/CleanMac.app` for the installed app
 
 ## Install from GitHub release
 
@@ -59,9 +65,11 @@ For a fully frictionless download experience, the release must be signed with a 
 - Left click the menu bar icon to lock or unlock the keyboard
 - Right click the icon to open the app menu
 - If prompted, grant Accessibility access in System Settings
+- The menu bar icon changes between unlocked and locked states when the keyboard lock is toggled
 
 ## Notes
 
 - The app blocks all connected keyboards, not only the built-in MacBook keyboard
 - Caps Lock LED behavior depends on keyboard firmware and may still flash briefly
+- If Accessibility behaves inconsistently, macOS TCC state may need to be reset for the exact app variant you are launching
 - CleanMac is intended for direct distribution outside the Mac App Store
