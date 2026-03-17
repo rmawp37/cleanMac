@@ -28,6 +28,7 @@ swift run
 
 The build script creates a distributable app bundle at `dist/CleanMac.app` and a zip archive at `dist/CleanMac.zip`.
 By default the app is ad-hoc signed. For public distribution on other Macs, you should rebuild it with a Developer ID identity and notarize it.
+To update the app branding, replace `logo.png`, `logo.jpg`, or `logo.jpeg` in the project root and rebuild. The scripts regenerate both the menu bar logo and the app icon automatically.
 
 ## Install from GitHub release
 

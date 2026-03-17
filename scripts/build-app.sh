@@ -13,13 +13,15 @@ SIGNING_IDENTITY="${CLEANMAC_CODESIGN_IDENTITY:--}"
 mkdir -p "$DIST_DIR"
 rm -rf "$APP_DIR" "$DIST_DIR/CleanMac.zip"
 
+"$ROOT_DIR/scripts/create-iconset.sh"
+
 swift build -c release --product CleanMac
 BUILD_DIR="$(swift build -c release --show-bin-path)"
 
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 cp "$BUILD_DIR/CleanMac" "$MACOS_DIR/CleanMac"
 cp "$ROOT_DIR/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
-cp "$ROOT_DIR/logo.png" "$RESOURCES_DIR/logo.png"
+cp "$ROOT_DIR/Sources/CleanMac/Resources/logo.png" "$RESOURCES_DIR/logo.png"
 
 for bundle in "$BUILD_DIR"/*.bundle; do
     [[ -e "$bundle" ]] || continue
