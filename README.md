@@ -20,6 +20,8 @@ CleanMac is a lightweight macOS menu bar app that temporarily disables keyboard 
 swift run
 ```
 
+`swift run` is only for development. Accessibility permission granted to the installed app does not automatically apply to the transient SwiftPM run binary.
+
 ## Build the app bundle
 
 ```bash
@@ -29,6 +31,14 @@ swift run
 The build script creates a distributable app bundle at `dist/CleanMac.app` and a zip archive at `dist/CleanMac.zip`.
 By default the app is ad-hoc signed. For public distribution on other Macs, you should rebuild it with a Developer ID identity and notarize it.
 To update the app branding, replace `logo.png`, `logo.jpg`, or `logo.jpeg` in the project root and rebuild. The scripts regenerate both the menu bar logo and the app icon automatically.
+
+## Install locally
+
+```bash
+./scripts/install-app.sh
+```
+
+This installs the app to `/Applications/CleanMac.app`. For the most reliable Accessibility behavior, always launch and authorize this installed app instead of using `swift run`.
 
 ## Install from GitHub release
 
