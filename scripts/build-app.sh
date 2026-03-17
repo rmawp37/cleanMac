@@ -8,6 +8,7 @@ APP_DIR="$DIST_DIR/CleanMac.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
+SIGNING_IDENTITY="${CLEANMAC_CODESIGN_IDENTITY:--}"
 
 mkdir -p "$DIST_DIR"
 rm -rf "$APP_DIR" "$DIST_DIR/CleanMac.zip"
@@ -58,7 +59,10 @@ cat > "$CONTENTS_DIR/Info.plist" <<'PLIST'
 </plist>
 PLIST
 
+codesign --force --deep --sign "$SIGNING_IDENTITY" "$APP_DIR"
+
 ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$DIST_DIR/CleanMac.zip"
 
 echo "Created $APP_DIR"
 echo "Created $DIST_DIR/CleanMac.zip"
+echo "Signed with identity: $SIGNING_IDENTITY"
