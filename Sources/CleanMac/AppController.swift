@@ -5,6 +5,8 @@ final class AppController {
     private let capsLockRemapper = CapsLockRemapper()
     private let keyboardBlocker = KeyboardBlocker()
     private let statusItemController: StatusItemController
+    private var accessibilityPromptWasRequested = false
+    private var accessibilityPollTimer: Timer?
     private var wakeObserver: Any?
 
     init() {
@@ -30,16 +32,13 @@ final class AppController {
         }
 
         refreshUI()
-
-        if !Permissions.isAccessibilityTrusted(prompt: false) {
-            statusItemController.showPermissionHint()
-        }
     }
 
     func shutdown() {
         if let wakeObserver {
             NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver)
         }
+        accessibilityPollTimer?.invalidate()
         keyboardBlocker.stopBlocking()
         capsLockRemapper.restoreOriginalMapping()
     }
@@ -52,11 +51,14 @@ final class AppController {
             return
         }
 
-        guard Permissions.isAccessibilityTrusted(prompt: true) else {
-            statusItemController.showPermissionHint()
+        guard Permissions.isAccessibilityTrusted(prompt: false) else {
+            requestAccessibilityPermissionIfNeeded()
             refreshUI()
             return
         }
+
+        stopAccessibilityPolling()
+        accessibilityPromptWasRequested = false
 
         do {
             try capsLockRemapper.applyLockedMapping()
@@ -82,5 +84,43 @@ final class AppController {
 
     private func refreshUI() {
         statusItemController.update(isLocked: keyboardBlocker.isBlocking)
+    }
+
+    private func requestAccessibilityPermissionIfNeeded() {
+        guard !accessibilityPromptWasRequested else {
+            startAccessibilityPolling()
+            return
+        }
+
+        accessibilityPromptWasRequested = true
+        _ = Permissions.isAccessibilityTrusted(prompt: true)
+        startAccessibilityPolling()
+    }
+
+    private func startAccessibilityPolling() {
+        guard accessibilityPollTimer == nil else {
+            return
+        }
+
+        accessibilityPollTimer = Timer.scheduledTimer(
+            timeInterval: 1.0,
+            target: self,
+            selector: #selector(handleAccessibilityPoll),
+            userInfo: nil,
+            repeats: true
+        )
+    }
+
+    private func stopAccessibilityPolling() {
+        accessibilityPollTimer?.invalidate()
+        accessibilityPollTimer = nil
+    }
+
+    @objc private func handleAccessibilityPoll() {
+        if Permissions.isAccessibilityTrusted(prompt: false) {
+            accessibilityPromptWasRequested = false
+            stopAccessibilityPolling()
+            refreshUI()
+        }
     }
 }
